@@ -43,4 +43,51 @@ mod tests {
 
         assert!(a_result == 11);
     }
+
+    #[test]
+    fn custom_struct() {
+        #[derive(Debug)]
+        struct HeavyStruct {
+            data: Vec<i32>,
+        }
+
+        impl Add for HeavyStruct {
+            type Output = HeavyStruct;
+
+            fn add(self, rhs: Self) -> Self::Output {
+                HeavyStruct {
+                    data: self
+                        .data
+                        .iter()
+                        .zip(rhs.data.iter())
+                        .map(|(lhs_elem, rhs_elem)| lhs_elem + rhs_elem)
+                        .collect(),
+                }
+            }
+        }
+
+        #[derive(Debug)]
+        struct HeavyStructConfig {
+            value: i32,
+            len: usize,
+        }
+
+        impl Operand<HeavyStruct> for HeavyStructConfig {
+            fn get_value(self: Box<Self>) -> HeavyStruct {
+                HeavyStruct {
+                    data: vec![self.value; self.len],
+                }
+            }
+        }
+
+        #[default_execute]
+        type HSExpr = BTNode<HeavyStruct>;
+
+        let a = HSExpr::new(HeavyStructConfig { value: 4, len: 3 })
+            + HSExpr::new(HeavyStructConfig { value: 1, len: 3 });
+
+        let a_result = a.execute();
+
+        assert!(a_result.data == vec![5, 5, 5])
+    }
 }
