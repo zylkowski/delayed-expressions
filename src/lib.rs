@@ -54,15 +54,13 @@ mod tests {
         impl Add for HeavyStruct {
             type Output = HeavyStruct;
 
-            fn add(self, rhs: Self) -> Self::Output {
-                HeavyStruct {
-                    data: self
-                        .data
-                        .iter()
-                        .zip(rhs.data.iter())
-                        .map(|(lhs_elem, rhs_elem)| lhs_elem + rhs_elem)
-                        .collect(),
-                }
+            fn add(mut self, rhs: Self) -> Self::Output {
+                self.data
+                    .iter_mut()
+                    .zip(rhs.data.iter())
+                    .for_each(|(lhs_elem, rhs_elem)| *lhs_elem += rhs_elem);
+
+                HeavyStruct { data: self.data }
             }
         }
 
