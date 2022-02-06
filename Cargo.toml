@@ -8,3 +8,6 @@ edition = "2018"
 
 [dependencies]
 delayed_expressions_derive = {version="*", path="./delayed-expressions-derive"}
+serde = { version = "*", features = ["derive"]}
+typetag = "*"
+erased-serde = "0.3.18"
